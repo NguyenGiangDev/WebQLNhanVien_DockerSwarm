@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  front_end:
+    build:
+      context: ./Front-end
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.service == front_end
+
+  authentication_service:
+    build:
+      context: ./authentication_services
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    networks:
+      - app-network
+    depends_on:
+      - front_end  # Khởi động sau front_end
+    deploy:
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.service == authentication
+
+  employee_service:
+    build:
+      context: ./employee_services
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    depends_on:
+      - authentication_service  # Khởi động sau authentication_service
+    deploy:
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.service == employee
+
+  department_service:
+    build:
+      context: ./department_services
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    networks:
+      - app-network
+    depends_on:
+      - employee_service  # Khởi động sau employee_service
+    deploy:
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.service == department
+
+networks:
+  app-network:
+    driver: overlay
