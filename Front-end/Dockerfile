@@ -1,24 +1,19 @@
-# Sử dụng hình ảnh Node.js chính thức, phiên bản 18
-FROM node:18 as build
+# Sử dụng Node.js cho production
+FROM node:18
 
 # Đặt thư mục làm việc
 WORKDIR /usr/src/app
 
-# Sao chép file package.json và package-lock.json và cài đặt phụ thuộc
+# Sao chép file package.json và cài đặt dependencies
 COPY package*.json ./
 RUN npm install
 
-# Sao chép toàn bộ mã nguồn và build ứng dụng
+# Sao chép toàn bộ mã nguồn
 COPY . .
-RUN npm run build
 
-# Sử dụng một Nginx image để phục vụ ứng dụng
-FROM nginx:alpine
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
-
-# Expose cổng Nginx
+# Mở cổng ứng dụng (thay số 3000 bằng cổng ứng dụng nếu khác)
 EXPOSE 3000
 
-# Khởi động Nginx
+# Khởi động ứng dụng
 CMD ["npm", "start"]
 

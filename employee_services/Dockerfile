@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Cài đặt các phụ thuộc chỉ dành cho production
-RUN npm install --only=production
+RUN npm install 
 
 # Sao chép toàn bộ mã nguồn vào thư mục làm việc
 COPY . .

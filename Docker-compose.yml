@@ -1,68 +1,75 @@
 version: '3.8'
-
+  
 services:
-  front_end:
-    build:
-      context: ./Front-end
-      dockerfile: Dockerfile
+  frontend:
+    image: nguyengianguit/frontend-image:latest
     ports:
       - "3000:3000"
     networks:
-      - app-network
+      - app_network
     deploy:
       replicas: 1
       placement:
-        constraints: 
-          - node.labels.service == front_end
+        constraints:
+          - node.role == worker
 
-  authentication_service:
-    build:
-      context: ./authentication_services
-      dockerfile: Dockerfile
+  authentication_services:
+    image: nguyengianguit/auth-service-image:latest
     ports:
       - "3003:3003"
     networks:
-      - app-network
+      - app_network
     depends_on:
-      - front_end  # Khởi động sau front_end
+      - db
+    restart: on-failure
     deploy:
       replicas: 1
       placement:
-        constraints: 
-          - node.labels.service == authentication
+        constraints:
+          - node.role == worker
 
-  employee_service:
-    build:
-      context: ./employee_services
-      dockerfile: Dockerfile
+  employee_services:
+    image: nguyengianguit/employee-services-image:latest
     ports:
       - "3001:3001"
     networks:
-      - app-network
+      - app_network
     depends_on:
-      - authentication_service  # Khởi động sau authentication_service
+      - db
+    restart: on-failure
     deploy:
       replicas: 1
       placement:
-        constraints: 
-          - node.labels.service == employee
+        constraints:
+          - node.role == worker
 
-  department_service:
-    build:
-      context: ./department_services
-      dockerfile: Dockerfile
+  department_services:
+    image: nguyengianguit/department_services_image:latest
     ports:
       - "3002:3002"
     networks:
-      - app-network
+      - app_network
     depends_on:
-      - employee_service  # Khởi động sau employee_service
+      - db
+    restart: on-failure
     deploy:
       replicas: 1
       placement:
-        constraints: 
-          - node.labels.service == department
+        constraints:
+          - node.role == worker
+
+  db:
+    image: mongo
+    ports:
+      - "27017:27017" 
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app_network
 
 networks:
-  app-network:
+  app_network:
     driver: overlay
+
+volumes:
+  mongo-data:

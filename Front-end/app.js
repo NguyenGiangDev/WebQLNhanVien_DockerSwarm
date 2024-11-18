@@ -137,6 +137,7 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // Chạy server
-app.listen(PORT, () => {
-  console.log(`Frontend service running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Frontend service running on port ${PORT}`);
 });
+

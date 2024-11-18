@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # Sao chép các file package.json và package-lock.json để cài đặt các phụ thuộc
 COPY package*.json ./
-RUN npm install --only=production
+RUN npm install 
 
 # Sao chép toàn bộ mã nguồn vào thư mục làm việc
 COPY . .
