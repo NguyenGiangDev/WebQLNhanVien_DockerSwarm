@@ -66,13 +66,18 @@ services:
 
 
   db:
-    image: mongo
+    image: mongo:latest
     ports:
       - "27017:27017" 
     volumes:
       - mongo-data:/data/db
     networks:
       - app_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
 
 networks:
   app_network:
