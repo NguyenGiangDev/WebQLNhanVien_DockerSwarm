@@ -1,21 +1,23 @@
-# Sử dụng hình ảnh Node.js chính thức, phiên bản 18
+# Sử dụng Node.js cho production
 FROM node:18
 
-# Tạo thư mục làm việc trong container
+# Đặt thư mục làm việc
 WORKDIR /usr/src/app
 
-# Sao chép file package.json và package-lock.json để cài đặt các phụ thuộc
+# Sao chép file package.json và cài đặt dependencies
 COPY package*.json ./
+RUN npm install
 
-# Cài đặt các phụ thuộc chỉ dành cho production
-RUN npm install 
-
-# Sao chép toàn bộ mã nguồn vào thư mục làm việc
+# Sao chép toàn bộ mã nguồn
 COPY . .
 
-# Mở cổng mà service này sẽ lắng nghe (chỉnh lại nếu dùng cổng khác)
+# Tải xuống script wait-for-it
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/src/app/wait-for-it.sh
+RUN chmod +x /usr/src/app/wait-for-it.sh
+
+# Mở cổng ứng dụng (thay số 3000 bằng cổng ứng dụng nếu khác)
 EXPOSE 3001
 
-# Lệnh để khởi động service
-CMD ["npm", "start"]
+# Khởi động ứng dụng và chờ MongoDB
+CMD ["./wait-for-it.sh", "db:27017", "--", "npm", "start"]
 

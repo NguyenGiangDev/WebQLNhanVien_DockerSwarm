@@ -12,6 +12,7 @@ services:
       placement:
         constraints:
           - node.role == worker
+    command: ["./wait-for-it.sh", "db:27017", "--", "npm", "start"]  # Thêm dòng này
 
   authentication_services:
     image: nguyengianguit/auth-service-image:latest
@@ -27,6 +28,8 @@ services:
       placement:
         constraints:
           - node.role == worker
+    command: ["./wait-for-it.sh", "db:27017", "--", "npm", "start"]  # Thêm dòng này
+
 
   employee_services:
     image: nguyengianguit/employee-services-image:latest
@@ -42,6 +45,8 @@ services:
       placement:
         constraints:
           - node.role == worker
+    command: ["./wait-for-it.sh", "db:27017", "--", "npm", "start"]  # Thêm dòng này
+
 
   department_services:
     image: nguyengianguit/department_services_image:latest
@@ -57,6 +62,8 @@ services:
       placement:
         constraints:
           - node.role == worker
+    command: ["./wait-for-it.sh", "db:27017", "--", "npm", "start"]  # Thêm dòng này
+
 
   db:
     image: mongo
