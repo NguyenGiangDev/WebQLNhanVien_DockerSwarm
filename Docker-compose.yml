@@ -74,7 +74,7 @@ services:
     networks:
       - app_network
     deploy:
-      replicas: 1
+      replicas: 2
       placement:
         constraints:
           - node.role == worker

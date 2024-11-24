@@ -84,6 +84,13 @@
         .admin-only {
             display: none;
         }
+	  footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto; /* Đảm bảo footer luôn nằm ở dưới cùng */
+        }
     </style>
 </head>
 <body>
@@ -102,7 +109,7 @@
         <button id="reset-button">Thu gọn</button>
         <button id="sort-button">Sắp xếp nhân viên theo lương</button>
         <button id="department-button">Phòng ban</button>
-        <input type="search" id="search-box" placeholder="Tìm kiếm nhân viên theo tên">
+        <input type="search" id="search-box" placeholder="Tìm kiếm nhân viên theo phòng ban">
 
         <div id="employee-list">
             <h2>Danh sách nhân viên</h2>
@@ -121,7 +128,11 @@
             </table>
         </div>
     </div>
-
+         <footer>
+        <p>Nguyễn Đình Giang | UIT</p>
+        <p>Email: <a href="mailto:nguyendinhgiang2004tgdd@gmail.com">nguyendinhgiang2004tgdd@gmail.com</a></p>
+        <p>GitHub: <a href="https://github.com/NguyenGiangDev" target="_blank">NguyenGiangDev</a></p>
+        </footer>
     <script>
         let employees = []; // Biến lưu trữ danh sách nhân viên
 
@@ -238,13 +249,13 @@
             document.getElementById('search-box').style.display = 'none'; // Ẩn ô tìm kiếm
         });
 
-        // Tìm kiếm nhân viên theo tên
+        // Tìm kiếm nhân viên theo phòng ban
         document.getElementById('search-box').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase(); // Lấy giá trị từ ô tìm kiếm
 
-            // Lọc danh sách nhân viên theo tên
+            // Lọc danh sách nhân viên theo phòng ban
             const filteredEmployees = employees.filter(employee => 
-                employee.name.toLowerCase().includes(searchTerm)
+                employee.position.toLowerCase().includes(searchTerm)
             );
 
             renderEmployeeList(filteredEmployees); // Hiển thị lại danh sách sau khi lọc
