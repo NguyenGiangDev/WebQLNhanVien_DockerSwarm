@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets:
+        - 'worker1:9100'   # Node Exporter trên Worker 1
+        - 'worker2:9101'   # Node Exporter trên Worker 2
+        - 'worker3:9102'   # Node Exporter trên Worker 3
+
