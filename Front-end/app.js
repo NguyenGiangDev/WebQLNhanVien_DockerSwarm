@@ -15,6 +15,45 @@ app.use(cookieParser()); // Sử dụng cookie-parser
 const EMPLOYEE_API_URL = process.env.EMPLOYEE_API_URL || 'http://employee_services:3001';
 const DEPARTMENT_API_URL = process.env.DEPARTMENT_API_URL || 'http://department_services:3002';
 const AUTHENTICATION_API_URL = process.env.AUTHENTICATION_API_URL || 'http://authentication_services:3003';
+const { collectDefaultMetrics, Registry, Counter } = require('prom-client');
+
+// Tự động thu thập các metric mặc định
+collectDefaultMetrics();
+
+// Tạo một Counter để đếm số lượng đăng nhập thành công
+const loginCounter = new Counter({
+  name: 'login_attempts_total',
+  help: 'Total number of login attempts',
+  labelNames: ['status'], // Gắn nhãn để phân biệt đăng nhập thành công/thất bại
+});
+
+// Route thu thập metric
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', 'text/plain; version=0.0.4');
+    res.end(await Registry.globalRegistry.metrics());
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Tích hợp trong route đăng nhập
+app.post('/api/auth/login', (req, res) => {
+  const { id, password } = req.body;
+
+  axios.post(`${AUTHENTICATION_API_URL}/authentication/login`, { id, password })
+    .then(response => {
+      if (response.status === 200) {
+        loginCounter.inc({ status: 'success' }); // Tăng số lượng đăng nhập thành công
+        res.redirect('/add_employ.html');
+      }
+    })
+    .catch(error => {
+      loginCounter.inc({ status: 'failure' }); // Tăng số lượng đăng nhập thất bại
+      res.status(401).send('Invalid credentials');
+    });
+});
+
 
 // Route để lấy danh sách nhân viên
 app.get('/api/employees', (req, res) => {
